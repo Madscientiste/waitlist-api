@@ -1,0 +1,18 @@
+[project]
+name = "techtest"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.116.1",
+    "pydantic-settings>=2.10.1",
+    "pytest>=8.4.1",
+    "rich>=14.1.0",
+    "ruff>=0.12.8",
+    "sqlalchemy>=2.0.42",
+]
+
+[[tool.uv.index]]
+url = "https://gitlab.com/api/v4/groups/105014434/-/packages/pypi/simple"
+default = true
