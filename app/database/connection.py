@@ -120,11 +120,8 @@ def is_in_transaction():
 @contextmanager
 def transaction():
     """Global transaction context manager with safeguards against leaks"""
-    # Generate unique transaction token
     tx_id = str(uuid4())
-
-    # Set both context variable and thread-local backup
-    token = _tx_token.set(tx_id)  # type: ignore
+    token = _tx_token.set(tx_id)
 
     try:
         yield
