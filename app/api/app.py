@@ -25,12 +25,6 @@ async def lifespan(app: FastAPI):
     total_routes = len(app.routes)
     logger.info(f"Starting up 🚀 with {total_routes} routes")
 
-    try:
-        BaseModel.metadata.create_all(db.engine)
-    except Exception as exc:
-        logger.exception(exc)
-        raise exc from exc
-
     yield
 
     # Shutdown
