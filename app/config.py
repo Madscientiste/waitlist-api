@@ -2,6 +2,7 @@
 Configuration module for application settings.
 """
 
+import logging
 from typing import Any, Literal
 
 from pydantic import computed_field
@@ -81,6 +82,15 @@ try:
     print()
     logger.info("Loading configuration...")
     app_config = AppConfig()
+
+    # set the logger level depending on the environment
+    if app_config.ENVIRONMENT in ["local", "testing"]:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
+
+    logger.debug(f"Logger level set to {logger.level}")
+
 except ValidationError as exc:
     logger.error("Missing environment variables, please check your .env file")
     console = Console()

@@ -33,8 +33,19 @@ class BaseModelMeta(type(DeclarativeBase)):
         new_class.add_to_class("session", SessionDescriptor())
         new_class.add_to_class("is_in_transaction", TransactionDescriptor())
 
-        # Here goes the manager ( querysets ) implmentations
-        # But i don't have enough time for this project
+        # This is where manager (queryset) implementations would go.
+        # For example, you could use:
+        #
+        #   # Get a post by ID
+        #   post = Post.objects.get(id=5)
+        #
+        #   # Get the most recent published post by a specific author
+        #   latest_post = Post.objects.filter(
+        #       author__username="johndoe", 
+        #       status="published"
+        #   ).order_by("-published_at").first()
+        #
+        # However, due to time constraints, this feature is not implemented in this project.
 
         # Don't forget to return the new class.... ( because i did, not fun to debug )
         return new_class
