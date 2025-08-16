@@ -7,10 +7,15 @@
 - **SQLAlchemy 2.0** - Advanced ORM with async support
 - **Docker** - Containerized deployment
 - **Pytest** - Comprehensive testing framework
+- **Sqlite or Postgres** - both are supported, but sqlite is used for simplicity. in production, postgres would be preferred.
 
-## 📋 Assumptions
+## Things i considered
 
-This service is designed to be consumed by other services in a microservices architecture. We provide comprehensive waitlist management capabilities, but expect callers to provide metadata about users, events, and other domain entities.
+- This service is designed to be consumed by other services in a microservices architecture.
+- the waitlist is a FIFO queue, so the first user to join the waitlist is the first to be "notified" when tickets are available.
+- Waitlist sizes are expected to be manageable (hundreds to low thousands of entries per offer/representation).
+- Position gaps after users leave are acceptable for simplicity (no automatic reordering).
+- ... thats all i can think of for now.
 
 ## 🏃‍♂️ Quick Start
 
