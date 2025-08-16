@@ -2,7 +2,6 @@ import pytest
 
 from app.bootstrap import init
 from app.database.connection import db, transaction
-from app.models.health import Health
 from app.models.user import User
 from app.models.waitlist import Waitlist
 
