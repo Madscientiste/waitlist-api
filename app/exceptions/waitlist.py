@@ -41,3 +41,11 @@ class UserNotOnWaitlistError(BaseAppException):
     code = "USER_NOT_ON_WAITLIST"
     http_status_code = status.HTTP_404_NOT_FOUND
     message = "User is not on this waitlist"
+
+
+class UserDoesNotExistError(BaseAppException):
+    """Raised when user does not exist."""
+
+    code = "USER_DOES_NOT_EXIST"
+    http_status_code = status.HTTP_404_NOT_FOUND
+    message = "User does not exist"

@@ -20,7 +20,6 @@ from .routes import api_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
-    # Here we will initialize the database schema since we will not add a migration system
 
     total_routes = len(app.routes)
     logger.info(f"Starting up 🚀 with {total_routes} routes")

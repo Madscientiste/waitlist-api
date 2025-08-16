@@ -18,18 +18,8 @@ def init(skip_data=False):
     from app.database.model import BaseModel
     from app.models import Event, Inventory, Offer, Representation
 
-    # Check if tables already exist
-    with db.scope():
-        # Just check if any table exists - if so, we've already imported
-        from sqlalchemy import inspect
-
-        inspector = inspect(db.engine)
-        existing_tables = inspector.get_table_names()
-
-        if existing_tables:
-            teardown()
-
-    # since everyhing is in __init__; this will create everything
+    # Just remove everything and start fresh each time
+    BaseModel.metadata.drop_all(db.engine)
     BaseModel.metadata.create_all(db.engine)
 
     if skip_data:

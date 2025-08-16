@@ -5,7 +5,7 @@ from fastapi import APIRouter
 
 from app.config import APP_ROUTES_MODULES
 
-api_router = APIRouter(prefix="/api/v1")
+api_router = APIRouter(prefix="/api")
 
 # Here we either includes manually or just let the
 # auto-importing thing do its things
