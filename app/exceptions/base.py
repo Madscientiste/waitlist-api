@@ -5,6 +5,8 @@ from fastapi.responses import JSONResponse, Response
 from starlette import status
 from starlette.types import Receive, Scope, Send
 
+from app import logger
+
 
 class BaseAppException(Exception):
     code: str = "INTERNAL_APP_ERROR"
@@ -30,6 +32,9 @@ class BaseAppException(Exception):
 
     def __call__(self, scope: Scope, receive: Receive, send: Send):
         """Allow the exception to be used directly as an ASGI response."""
+        # This log each time an exception is raised but rendered to the user
+        # This can be any exception, not just the ones we raise
+        logger.exception(self)
         return self.to_json_response()(scope, receive, send)
 
     @classmethod
