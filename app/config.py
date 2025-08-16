@@ -3,6 +3,7 @@ Configuration module for application settings.
 """
 
 import logging
+from pathlib import Path
 from typing import Any, Literal
 
 from pydantic import computed_field
@@ -28,12 +29,13 @@ class AppConfig(BaseSettings):
     ENVIRONMENT: Literal["prod", "dev", "testing", "local"] = "local"
 
     # == Database ==
-    DATABASE_USER: str
-    DATABASE_PASSWORD: str
-    DATABASE_HOST: str
-    DATABASE_PORT: int
-    DATABASE_DB: str
+    DATABASE_USER: str = "app"
+    DATABASE_PASSWORD: str = "unhackablepasswordbecausenoonewillguessthisoneheh"
+    DATABASE_HOST: str = "localhost"
+    DATABASE_PORT: int = 5742
+    DATABASE_DB: str = "hello_world"
 
+    DATABASE_INIT_SEED: bool = False
     DATABASE_FORCE_SQLITE: bool = False
     DATABASE_DEBUG: bool = False
     DATABASE_POOL_SIZE: int = 60
@@ -65,6 +67,7 @@ class AppConfig(BaseSettings):
         # Makes testing easier; but in the future using the same database as prod is recommended
         if self.ENVIRONMENT in ["ci", "local", "testing"] or self.DATABASE_FORCE_SQLITE:
             ARGS["url"] = f"sqlite:///{self.DATABASE_DB}.db"
+
             del ARGS["connect_args"]
 
         return ARGS
