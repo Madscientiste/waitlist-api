@@ -31,10 +31,8 @@ def app():
 
 @pytest.fixture()
 def client(app):
+    from app.bootstrap import init
+
+    init(skip_data=True)
+
     return TestClient(app)
-
-
-# Note: Table creation is currently handled by FastAPI's startup event,
-# so explicit setup here is skipped for API tests. For direct database/model tests,
-# ensure tables are created before running tests. Improving this setup for more
-# robust and isolated test environments is recommended in the future.
