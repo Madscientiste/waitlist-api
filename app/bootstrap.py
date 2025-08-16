@@ -5,9 +5,11 @@
 import csv
 from datetime import datetime
 from pathlib import Path
+from random import randint, random
 
 from app.logger import logger
 from app.models.user import User
+from app.models.waitlist import Waitlist
 
 # Data is at the root of the project
 DATA_DIR = Path(__file__).parent.parent / "data"
@@ -24,13 +26,6 @@ def init(skip_data=False):
 
     if skip_data:
         return
-
-    User(
-        id="user_001",
-        email="test@test.com",
-        first_name="Test",
-        last_name="User",
-    ).save()
 
     # Load events
     with open(DATA_DIR / "events.csv", "r") as file:
@@ -89,6 +84,24 @@ def init(skip_data=False):
             logger.info(
                 f"Created inventory: {inventory.inventory_id} - {inventory.available_stock}/{inventory.total_stock} available"
             )
+
+    # create 30 waitlist entries
+    for i in range(30):
+        user = User(
+            id=f"user_0{i:02d}",
+            email=f"test{i}@test.com",
+            first_name=f"Test{i}",
+            last_name=f"User{i}",
+        ).save()
+
+        # create a waitlist entry for the user
+        Waitlist(
+            id=f"wait_user_0{i:02d}_off_001_repr_001",
+            user_id=user.id,
+            offer_id="off_001",
+            representation_id="rep_001",
+            requested_quantity=randint(1, 10),
+        ).save()
 
 
 def teardown():
