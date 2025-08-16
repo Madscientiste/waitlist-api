@@ -8,7 +8,7 @@ from app.models.waitlist import Waitlist
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_database():
-    init()
+    init(no_waitlist=True)
     yield
 
 

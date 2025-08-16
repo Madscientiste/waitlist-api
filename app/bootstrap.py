@@ -15,7 +15,7 @@ from app.models.waitlist import Waitlist
 DATA_DIR = Path(__file__).parent.parent / "data"
 
 
-def init(skip_data=False):
+def init(skip_data=False, no_waitlist=False):
     from app.database.connection import db
     from app.database.model import BaseModel
     from app.models import Event, Inventory, Offer, Representation
@@ -84,6 +84,9 @@ def init(skip_data=False):
             logger.info(
                 f"Created inventory: {inventory.inventory_id} - {inventory.available_stock}/{inventory.total_stock} available"
             )
+
+    if no_waitlist:
+        return
 
     # create 30 waitlist entries
     for i in range(30):

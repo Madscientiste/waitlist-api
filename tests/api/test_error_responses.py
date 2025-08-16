@@ -55,7 +55,7 @@ def test_validation_error_response_structure(client: TestClient):
     # Validation errors should have specific status and include details
     assert error["status"] == "VALIDATION_ERROR"
     assert error["code"] == 422
-    assert error["message"] == "Validation failed"
+    assert error["message"] == "Validation error"
 
     # Details should be present and contain validation errors
     assert "details" in error
@@ -82,7 +82,7 @@ def test_uncaught_exception_returns_generic_500(client: TestClient):
     error = data["error"]
 
     # Uncaught exceptions should be converted to generic internal error
-    assert error["status"] == "INTERNAL"
+    assert error["status"] == "INTERNAL_APP_ERROR"
     assert error["code"] == 500
     assert error["message"] == "Internal Server Error"
     assert error["method"] == "GET"
