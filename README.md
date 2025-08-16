@@ -1,121 +1,218 @@
-# Waiting List API
+# Event Waiting-List API
 
-Event waiting list backend with explicit context, per-request DB sessions, and a unified error envelope.
+## 🚀 Tech Stack
 
-## Project Stack
+- **Python 3.13** - Latest Python features and performance
+- **FastAPI 0.116** - Modern, fast web framework
+- **SQLAlchemy 2.0** - Advanced ORM with async support
+- **Docker** - Containerized deployment
+- **Pytest** - Comprehensive testing framework
 
-- Python 3.13
-- FastAPI 0.116
-- SQLAlchemy 2.0
-- Docker
+## 📋 Assumptions
 
-## Run
+This service is designed to be consumed by other services in a microservices architecture. We provide comprehensive waitlist management capabilities, but expect callers to provide metadata about users, events, and other domain entities.
 
-```sh
-# Install
+## 🏃‍♂️ Quick Start
+
+### Prerequisites
+
+Make sure you have Python 3.13+ and [uv](https://docs.astral.sh/uv/) installed.
+
+### Installation & Running
+
+```bash
+# Install dependencies
 uv sync
 
-# Ensure your env is active
+# Activate virtual environment
 source .venv/bin/activate
 
-# Dev server
+# Start development server
 fastapi dev app/api/app.py
-# or
+# or alternatively
 uvicorn app.api.app:app --reload
 
-# Tests
+# Run tests
 uv run pytest -q
+
+# Run with verbose output
+uv run pytest -v
 ```
 
-## Architecture at a glance
+### 🐳 Docker
 
-- Application / API: `app/api/app.py`, `app/api/routes/*`
-- Database/SQLAlchemy setup: `app/database/connection.py`, `app/database/middleware.py`, `app/database/model.py` (engine, scoped session, transactions, base model helpers)
+```bash
+# Build the image
+docker build -t waitlist-api .
 
-## Middleware execution flow (step-by-step)
+# Run the container
+docker run -p 8000:8000 waitlist-api
 
-1. Incoming HTTP request
+# Health check
+curl http://localhost:8000/api/ping
+```
 
-- A `request_id` is generated.
-- Method and path are captured.
+### 🌐 Access Points
 
-2. ContextMiddleware
+Once running, you can access:
 
-- Sets the application context HTTP zone with `request_id`, `method`, `path`.
-- The context is accessible anywhere via `get_app_context()` during the request.
+- **API Endpoints**: `http://localhost:8000/api`
+- **Interactive Docs**: `http://localhost:8000/docs`
+- **Health Check**: `http://localhost:8000/api/ping`
+- **Swagger UI**: `http://localhost:8000/swagger`
 
-3. DatabaseSessionMiddleware
+## 🏗️ Architecture Overview
 
-- Opens a per-request SQLAlchemy session using `db.scope()`; binds it to the current scope.
-- On successful completion, the session is closed.
-- On `SQLAlchemyError`, the session is rolled back, then closed.
+### Core Components
 
-4. Route handler
+```
+app/
+├── api/                   # FastAPI application & routes
+│   ├── app.py             # Main ASGI app with some configuration
+│   ├── routes/            # API endpoint definitions
+│   └── schemas/           # Pydantic models
+├── database/              # SQLAlchemy setup & helpers
+│   ├── connection.py      # Engine, sessions, transactions
+│   ├── middleware.py      # Per-request session management
+│   └── model.py           # Base model with helpers
+├── models/                # Domain models
+├── repositories/          # Data access layer
+├── exceptions/            # Custom exception hierarchy
+└── context/               # Request context management
+```
 
-- Executes your endpoint logic.
-- Transactions: use `transaction()` for outermost-commit semantics and `savepoint()` for nested rollbacks.
-  - Inside `transaction()`: `save()`/`delete()` perform `flush()` only; commit is handled by `transaction()`.
-  - Outside transactions: `save()`/`delete()` perform an immediate `commit()`.
+## 🔄 Request Lifecycle
 
-5. Validation errors
+Understanding how requests flow through the system:
 
-- `fastapi.exceptions.RequestValidationError` and `pydantic.ValidationError` are normalized by `handle_validation_error` into a 422 envelope (`UnprocessableEntity`).
-- `error.details` follows FastAPI/Pydantic `errors()` shape.
+### 1. 📥 Incoming Request
 
-6. Application and uncaught errors
+- Generate unique `request_id`
+- Capture HTTP `method` and `path`
 
-- `BaseAppException` is returned as-is in the standard envelope.
-- Any other uncaught exception is converted to `InternalError` (500) in the same envelope.
-- The global exception middleware logs request metadata and the last exception for monitoring systems (if logging/monitors are configured).
+### 2. 🎯 Context Middleware
 
-## Error envelope (standardized)
+- Initialize application context with request metadata
+- Make context accessible via `get_app_context()` throughout request
+
+### 3. 🗄️ Database Session Middleware
+
+- Open per-request SQLAlchemy session using `db.scope()`
+- Auto-cleanup: commit on success, rollback on `SQLAlchemyError`
+
+### 4. 🎪 Route Handler Execution
+
+- Execute your business logic
+- Use `transaction()` for commits, `savepoint()` for nested rollbacks
+- Inside transactions: `save()`/`delete()` only flush
+- Outside transactions: `save()`/`delete()` auto-commit
+
+### 5. ✅ Validation Error Handling
+
+- FastAPI/Pydantic validation errors → normalized responses
+- Detailed error information in `error.details`
+
+### 6. 🚨 Exception Handling
+
+- `BaseAppException` → structured error response
+- Uncaught exceptions → generic 500 `InternalError`
+- All errors logged for monitoring/debugging
+
+#### 📝 Error Envelope
+
+All API errors follow this consistent structure:
 
 ```json
 {
   "error": {
-    "status": "INTERNAL",
-    "code": 500,
-    "message": "Internal Server Error",
-    "details": [],
-    "request_id": "<uuid>",
+    "status": "VALIDATION_ERROR",
+    "code": 422,
+    "message": "Validation failed",
+    "details": [
+      {
+        "loc": ["query", "limit"],
+        "msg": "ensure this value is greater than 0",
+        "type": "value_error"
+      }
+    ],
+    "request_id": "550e8400-e29b-41d4-a716-446655440000",
     "method": "GET",
-    "path": "/api/v1/resource",
-    "timestamp": "2025-01-01T12:00:00Z"
+    "path": "/api/offers/123/representations/456/waitlist",
+    "timestamp": "2025-01-27T12:00:00Z"
   }
 }
 ```
 
-## App entry point
+### Basic Errors Types
 
-- Primary ASGI application: `app/api/app.py` exposes `app: FastAPI`.
+> If needed, more errors types are defined at `app/exceptions/*`
 
-### Programmatic usage (scripts/workers)
+| Status Code | Error Type                 | Description             |
+| ----------- | -------------------------- | ----------------------- |
+| `400`       | `INVALID_ARGUMENT`         | Bad request parameters  |
+| `404`       | `NOT_FOUND`                | Resource not found      |
+| `409`       | `USER_ALREADY_ON_WAITLIST` | Conflict state          |
+| `422`       | `VALIDATION_ERROR`         | Input validation failed |
+| `500`       | `INTERNAL`                 | Server error            |
 
-When running code outside the web server, ensure configuration is loaded, the app context is set, and a DB scope is opened.
+## 🧪 Testing
 
-```python
-from app.config import app_config  # ensures settings are loaded
-from app.context.app import app_context
-from app.database.connection import db
+### Running Tests
 
-# Example if having a custom script or CLI env
-with app_context() as ctx:
-    with ctx.cli(command="bootstrap", ...other_relevant_args):
-        with db.scope():
-            # Your code here (ORM, services, etc.)
-            ...
+```bash
+# Quick test run
+uv run pytest -q
+
+# Specific test file
+uv run pytest tests/api/test_error_responses.py -v
+
+# Test specific pattern
+uv run pytest -k "waitlist" -v
 ```
 
-### Transactions (optional)
+### Test Structure
 
-```python
-from app.context.app import app_context
-from app.database.connection import db, transaction, savepoint
-
-with app_context() as ctx, db.scope():
-    with transaction():
-        # writes...
-        with savepoint():
-            # partial writes...
-            ...
 ```
+tests/
+├── api/                  # API endpoint tests
+├── database/             # Database layer tests
+├── repositories/         # Repository tests with real data
+└── conftest.py           # Shared test fixtures
+```
+
+## 📊 API Endpoints
+
+### Waitlist API
+
+| Method   | Endpoint                                                              | Description           |
+| -------- | --------------------------------------------------------------------- | --------------------- |
+| `GET`    | `/api/offers/{offer_id}/representations/{repr_id}/waitlist`           | List waitlist entries |
+| `GET`    | `/api/offers/{offer_id}/representations/{repr_id}/waitlist/{user_id}` | Get user position     |
+| `POST`   | `/api/offers/{offer_id}/representations/{repr_id}/waitlist`           | Join waitlist         |
+| `DELETE` | `/api/offers/{offer_id}/representations/{repr_id}/waitlist/{user_id}` | Leave waitlist        |
+
+### System
+
+| Method | Endpoint    | Description  |
+| ------ | ----------- | ------------ |
+| `GET`  | `/api/ping` | Health check |
+
+## 🚀 CI/CD
+
+This project uses GitHub Actions for continuous integration:
+
+- **Automated Testing**: Runs on every push and PR to main branch
+- **Python 3.13**: Tests against the target Python version
+- **UV Integration**: Fast dependency installation with uv
+
+### Pipeline Steps
+
+1. **Setup**: Install Python 3.13 and uv package manager
+2. **Dependencies**: Install project dependencies with `uv sync`
+3. **Testing**: Run all tests with `pytest -v`
+
+## 📖 Additional Resources
+
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [SQLAlchemy 2.0 Tutorial](https://docs.sqlalchemy.org/en/20/tutorial/)
+- [Pydantic V2 Documentation](https://docs.pydantic.dev/latest/)
