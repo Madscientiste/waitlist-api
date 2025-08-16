@@ -29,28 +29,27 @@ async def get_waitlist_entries(
     offer_id: str,
     representation_id: str,
     limit: int = Query(
-        default=50,
+        default=10,
         ge=1,
         le=100,
         description="Maximum number of entries to return",
     ),
-    offset: int = Query(
-        default=0,
-        ge=0,
-        description="Number of entries to skip",
+    page: int = Query(
+        default=1,
+        ge=1,
+        description="Page number",
     ),
 ):
     """
     Get all entries in the waitlist for a specific offer and representation.
     """
     total_count = repo.get_waitlist_entries_count(offer_id, representation_id)
-    entries = repo.get_waitlist_entries(offer_id, representation_id, limit, offset)
+    entries = repo.get_waitlist_entries(offer_id, representation_id, limit, page - 1)
 
     # Calculate pagination info
-    page = (offset // limit) + 1
     total_pages = math.ceil(total_count / limit) if total_count > 0 else 1
-    has_next_page = offset + limit < total_count
-    has_previous_page = offset > 0
+    has_next_page = page < total_pages
+    has_previous_page = page > 1
 
     # Convert entries to response models
     items = [
@@ -70,7 +69,7 @@ async def get_waitlist_entries(
         has_next_page=has_next_page,
         has_previous_page=has_previous_page,
         total_count=total_count,
-        page=page,
+        page=page + 1,
         page_size=limit,
         total_pages=total_pages,
     )

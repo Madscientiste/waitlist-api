@@ -4,6 +4,7 @@ from typing import List, Optional
 
 from sqlalchemy.exc import IntegrityError
 
+from app import logger
 from app.exceptions.waitlist import (
     InvalidQuantityError,
     InvalidReferenceError,
@@ -123,7 +124,7 @@ class WaitlistRepository:
 
         return waitlist_entry
 
-    def get_waitlist_entries(self, offer_id: str, representation_id: str, limit: int = 50, offset: int = 0) -> List[Waitlist]:
+    def get_waitlist_entries(self, offer_id: str, representation_id: str, limit: int = 50, page: int = 0) -> List[Waitlist]:
         """
         Get all waitlist entries for a specific offer/representation, ordered by position.
 
@@ -131,7 +132,7 @@ class WaitlistRepository:
             offer_id: ID of the offer
             representation_id: ID of the representation
             limit: Maximum number of entries to return
-            offset: Number of entries to skip
+            page: Page number
 
         Returns:
             List of waitlist entries ordered by position
@@ -148,7 +149,7 @@ class WaitlistRepository:
             .filter(Waitlist.offer_id == offer_id, Waitlist.representation_id == representation_id)
             .order_by(Waitlist.position)
             .limit(limit)
-            .offset(offset)
+            .offset(page * limit)
             .all()
         )
 
@@ -267,9 +268,14 @@ class WaitlistRepository:
             True if both entities exist, False otherwise
         """
         offer = self._get_offer(offer_id)
-        representation = self._get_representation(representation_id)
+        if not offer:
+            raise InvalidReferenceError(message=f"Offer {offer_id} does not exist")
 
-        return offer is not None and representation is not None
+        representation = self._get_representation(representation_id)
+        if not representation:
+            raise InvalidReferenceError(message=f"Representation {representation_id} does not exist")
+
+        return True
 
     def _get_offer(self, offer_id: str) -> Optional[Offer]:
         """

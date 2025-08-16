@@ -11,6 +11,7 @@ from app.database.model import BaseModel
 if TYPE_CHECKING:
     from app.models.offer import Offer
     from app.models.representation import Representation
+    from app.models.user import User
 
 
 class Waitlist(BaseModel):
@@ -30,9 +31,8 @@ class Waitlist(BaseModel):
     )
 
     id: Mapped[str] = mapped_column(String, primary_key=True)
-    user_id: Mapped[str] = mapped_column(String, ForeignKey("users.id"), nullable=False)
 
-    # Simplify the queries for later
+    user_id: Mapped[str] = mapped_column(String, ForeignKey("users.id"), nullable=False)
     offer_id: Mapped[str] = mapped_column(String, ForeignKey("offers.offer_id"), nullable=False)
     representation_id: Mapped[str] = mapped_column(String, ForeignKey("representations.id"), nullable=False)
 
@@ -42,6 +42,7 @@ class Waitlist(BaseModel):
     # Relationships
     offer: Mapped["Offer"] = relationship("Offer", back_populates="waitlists")
     representation: Mapped["Representation"] = relationship("Representation", back_populates="waitlists")
+    user: Mapped["User"] = relationship("User", back_populates="waitlists")
 
 
 # Calculate the postion before inserting, using
