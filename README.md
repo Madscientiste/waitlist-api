@@ -25,6 +25,18 @@ Make sure you have Python 3.13+ and [uv](https://docs.astral.sh/uv/) installed.
 
 ### Installation & Running
 
+### 🐳 Docker ( fastest )
+
+```bash
+# Build the image
+docker compose up api --build
+
+# Health check
+curl http://localhost:8000/api/ping
+```
+
+> Note: Don't forget to set the environment variables in the `.env` from the `.env.example` file.
+
 ```bash
 # Install dependencies
 uv sync
@@ -47,26 +59,13 @@ uv run pytest -q
 uv run pytest -v
 ```
 
-### 🐳 Docker
-
-```bash
-# Build the image
-docker compose up api --build
-
-# Health check
-curl http://localhost:8000/api/ping
-```
-
-> Note: Don't forget to set the environment variables in the `.env` from the `.env.example` file.
-
 ### 🌐 Access Points
 
 Once running, you can access:
 
-- **API Endpoints**: `http://localhost:8000/api`
-- **Interactive Docs**: `http://localhost:8000/docs`
-- **Health Check**: `http://localhost:8000/api/ping`
-- **Swagger UI**: `http://localhost:8000/swagger`
+- **API Endpoints**: [http://localhost:8000/api](http://localhost:8000/api)
+- **Health Check**: [http://localhost:8000/api/ping](http://localhost:8000/api/ping)
+- **Swagger UI**: [http://localhost:8000/swagger](http://localhost:8000/swagger)
 
 ## 🏗️ Architecture Overview
 
