@@ -3,7 +3,7 @@ from importlib import import_module
 
 from fastapi import APIRouter
 
-from app.config import APP_ROUTES_MODULES
+APP_ROUTES_MODULES = "app.api.routes"
 
 api_router = APIRouter(prefix="/api")
 

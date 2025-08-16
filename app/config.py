@@ -107,5 +107,3 @@ except ValidationError as exc:
 
     console.log(table)
     exit(1)
-
-APP_ROUTES_MODULES = "app.api.routes"

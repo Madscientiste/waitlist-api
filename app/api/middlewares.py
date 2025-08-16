@@ -21,5 +21,6 @@ class ContextMiddleware:
                 request_id=request_id,
                 path=scope.get("path", "unknown"),
                 method=scope.get("method", "unknown"),
+                # Any other metadata we want to add to the request
             ):
                 await self.app(scope, receive, send)
