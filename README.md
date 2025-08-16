@@ -32,6 +32,9 @@ uv sync
 # Activate virtual environment
 source .venv/bin/activate
 
+# Initialize the database with the data/*.csv files
+python -m app.bootstrap
+
 # Start development server
 fastapi dev app/api/app.py
 # or alternatively
@@ -48,14 +51,13 @@ uv run pytest -v
 
 ```bash
 # Build the image
-docker build -t waitlist-api .
-
-# Run the container
-docker run -p 8000:8000 waitlist-api
+docker compose up api --build
 
 # Health check
 curl http://localhost:8000/api/ping
 ```
+
+> Note: Don't forget to set the environment variables in the `.env` from the `.env.example` file.
 
 ### 🌐 Access Points
 

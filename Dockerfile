@@ -17,6 +17,10 @@ RUN groupadd -g 999 webapp && \
     useradd -r -u 999 -g webapp webapp
 
 WORKDIR /usr/app
+
+# Ensuring we have proper permissions for the data directory
+RUN mkdir -p /usr/app/data && chown -R webapp:webapp /usr/app
+
 COPY --from=build /usr/app/.venv ./.venv
 COPY --chown=webapp:webapp . .
 
