@@ -65,7 +65,7 @@ Once running, you can access:
 
 - **API Endpoints**: [http://localhost:8000/api](http://localhost:8000/api)
 - **Health Check**: [http://localhost:8000/api/ping](http://localhost:8000/api/ping)
-- **Swagger UI**: [http://localhost:8000/swagger](http://localhost:8000/swagger)
+- **OpenAPI UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
 
 ## 🏗️ Architecture Overview
 
