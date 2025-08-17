@@ -91,6 +91,13 @@ app/
 └── context/               # Context management feature
 ```
 
+#### bootstrap.py
+
+`bootstrap.py` is a utility script for initializing the database with data from CSV files. In the absence of a migrations system, it provides a reliable way to seed the environment for development and testing. This script is ideal for quickly setting up or resetting the database during local development or in CI pipelines.
+
+You can run it with `python -m app.bootstrap` or import it as a module in other scripts.
+By default, it drops all tables and recreates them before loading data, unless configured otherwise.
+
 ## Request Lifecycle
 
 1. Request comes in with request_id for traceability.
