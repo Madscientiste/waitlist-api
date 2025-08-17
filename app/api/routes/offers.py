@@ -1,9 +1,7 @@
 import math
-from typing import List
 
 from fastapi import APIRouter, Query
 
-from app import logger
 from app.api.schemas.offers import (
     JoinWaitlistResponse,
     LeaveWaitlistResponse,
@@ -12,9 +10,6 @@ from app.api.schemas.offers import (
     WaitlistEntriesResponse,
     WaitlistEntryResponse,
 )
-from app.config import app_config
-from app.context.app import get_app_context
-from app.models.health import Health
 from app.repositories.waitlist import WaitlistRepository
 
 router = APIRouter(tags=["offers"])

@@ -1,21 +1,13 @@
-from datetime import datetime, timedelta
 
 import pytest
-from sqlalchemy.sql import select
 
-from app.bootstrap import init
-from app.database.connection import db, transaction
+from app.database.connection import db
 from app.exceptions.waitlist import (
     InvalidQuantityError,
     InvalidReferenceError,
     UserAlreadyOnWaitlistError,
     WaitlistNotAvailableError,
 )
-from app.models.event import Event
-from app.models.inventory import Inventory
-from app.models.offer import Offer
-from app.models.representation import Representation
-from app.models.user import User
 from app.repositories.waitlist import WaitlistRepository
 
 repo = WaitlistRepository()

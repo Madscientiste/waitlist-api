@@ -25,7 +25,7 @@ async def ping():
 
 
 if app_config.ENVIRONMENT in ["local", "testing"]:
-    logger.info(f"Added testing routes; '/error' and '/error/validation'")
+    logger.info("Added testing routes; '/error' and '/error/validation'")
 
     @router.get("/error")
     async def uncaught_error():

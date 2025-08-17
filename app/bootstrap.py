@@ -5,7 +5,7 @@
 import csv
 from datetime import datetime
 from pathlib import Path
-from random import randint, random
+from random import randint
 
 from app.logger import logger
 from app.models.user import User

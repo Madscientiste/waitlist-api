@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from typing import Any
 
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse
 from starlette import status
 from starlette.types import Receive, Scope, Send
 

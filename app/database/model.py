@@ -41,7 +41,7 @@ class BaseModelMeta(type(DeclarativeBase)):
         #
         #   # Get the most recent published post by a specific author
         #   latest_post = Post.objects.filter(
-        #       author__username="johndoe", 
+        #       author__username="johndoe",
         #       status="published"
         #   ).order_by("-published_at").first()
         #

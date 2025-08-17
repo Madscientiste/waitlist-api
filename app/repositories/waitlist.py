@@ -4,7 +4,6 @@ from typing import List, Optional
 
 from sqlalchemy.exc import IntegrityError
 
-from app import logger
 from app.exceptions.waitlist import (
     InvalidQuantityError,
     InvalidReferenceError,
@@ -13,7 +12,6 @@ from app.exceptions.waitlist import (
     UserNotOnWaitlistError,
     WaitlistNotAvailableError,
 )
-from app.models.event import Event
 from app.models.inventory import Inventory
 from app.models.offer import Offer
 from app.models.representation import Representation

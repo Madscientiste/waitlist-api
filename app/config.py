@@ -3,7 +3,6 @@ Configuration module for application settings.
 """
 
 import logging
-from pathlib import Path
 from typing import Any, Literal
 
 from pydantic import computed_field

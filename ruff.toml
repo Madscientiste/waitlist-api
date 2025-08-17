@@ -37,12 +37,18 @@ indent-width = 4
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
 # McCabe complexity (`C901`) by default.
 select = ["E4", "E7", "E9", "F"]
-ignore = []
+ignore = [
+    # Use an explicit re-export: `logger as logger`
+    "F401",
+    #  Local variable `duplicate_entry` is assigned to but never used
+    "F841",
+]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = [
     # Unused imports, indentations, etc.
     "E4",
+    "F401"
 ]
 unfixable = []
 

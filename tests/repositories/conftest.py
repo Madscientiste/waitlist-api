@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import pytest
 
 from app.bootstrap import init
-from app.database.connection import transaction
 from app.models.event import Event
 from app.models.inventory import Inventory
 from app.models.offer import Offer

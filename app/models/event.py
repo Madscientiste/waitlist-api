@@ -10,7 +10,6 @@ from app.database.model import BaseModel
 if TYPE_CHECKING:
     from app.models.offer import Offer
     from app.models.representation import Representation
-    from app.models.waitlist import Waitlist
 
 
 class Event(BaseModel):

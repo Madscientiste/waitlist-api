@@ -1,14 +1,11 @@
 import uuid
 
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import Response
 from pydantic import ValidationError as PydanticValidationError
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from app import logger
-from app.context.app import app_context, get_app_context
+from app.context.app import app_context
 from app.exceptions.base import BaseAppException
-from app.exceptions.basic import InternalError
 from app.exceptions.validation import ValidationError
 
 
