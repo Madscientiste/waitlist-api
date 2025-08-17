@@ -164,6 +164,8 @@ tests/
 
 ## 📊 API Endpoints
 
+> Note: I'm not a fan of this, i think this is too verbose; but for now its a good starting point.
+
 ### Waitlist API
 
 | Method   | Endpoint                                                              | Description           |
