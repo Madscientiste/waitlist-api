@@ -25,6 +25,8 @@ Make sure you have Python 3.13+ and [uv](https://docs.astral.sh/uv/) installed.
 
 ### Installation & Running
 
+> Note: Don't forget to set the environment variables in the `.env` from the `.env.example` file.
+
 ### 🐳 Docker ( fastest )
 
 ```bash
@@ -35,7 +37,7 @@ docker compose up api --build
 curl http://localhost:8000/api/ping
 ```
 
-> Note: Don't forget to set the environment variables in the `.env` from the `.env.example` file.
+### 🐍 Locally
 
 ```bash
 # Install dependencies
@@ -59,7 +61,7 @@ uv run pytest -q
 uv run pytest -v
 ```
 
-### 🌐 Access Points
+### Access Points
 
 Once running, you can access:
 
@@ -67,9 +69,11 @@ Once running, you can access:
 - **Health Check**: [http://localhost:8000/api/ping](http://localhost:8000/api/ping)
 - **OpenAPI UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
-### Core Components
+### Files structure
+
+> Note: Somtimes i like to add Readmees to some directores to fuirther explain their purpose. This is the case with `database/`.
 
 ```
 app/
@@ -84,47 +88,19 @@ app/
 ├── models/                # Domain models
 ├── repositories/          # Data access layer
 ├── exceptions/            # Custom exception hierarchy
-└── context/               # Request context management
+└── context/               # Context management feature
 ```
 
-## 🔄 Request Lifecycle
+## Request Lifecycle
 
-Understanding how requests flow through the system:
+1. Request comes in with request_id for traceability.
+2. Context + DB session created per request.
+3. Route executes business logic.
+4. On success → commit (auto-commit if outside a transaction).  
+   On uncaught error → rollback.
+5. Response returned (errors follow a common JSON envelope).
 
-### 1. 📥 Incoming Request
-
-- Generate unique `request_id`
-- Capture HTTP `method` and `path`
-
-### 2. 🎯 Context Middleware
-
-- Initialize application context with request metadata
-- Make context accessible via `get_app_context()` throughout request
-
-### 3. 🗄️ Database Session Middleware
-
-- Open per-request SQLAlchemy session using `db.scope()`
-- Auto-cleanup: commit on success, rollback on `SQLAlchemyError`
-
-### 4. 🎪 Route Handler Execution
-
-- Execute your business logic
-- Use `transaction()` for commits, `savepoint()` for nested rollbacks
-- Inside transactions: `save()`/`delete()` only flush
-- Outside transactions: `save()`/`delete()` auto-commit
-
-### 5. ✅ Validation Error Handling
-
-- FastAPI/Pydantic validation errors → normalized responses
-- Detailed error information in `error.details`
-
-### 6. 🚨 Exception Handling
-
-- `BaseAppException` → structured error response
-- Uncaught exceptions → generic 500 `InternalError`
-- All errors logged for monitoring/debugging
-
-#### 📝 Error Envelope
+#### Error Envelope
 
 All API errors follow this consistent structure:
 
@@ -183,7 +159,7 @@ tests/
 ├── api/                  # API endpoint tests
 ├── database/             # Database layer tests
 ├── repositories/         # Repository tests with real data
-└── conftest.py           # Shared test fixtures
+└── conftest.py           # Shared test fixtures + scope set up
 ```
 
 ## 📊 API Endpoints
